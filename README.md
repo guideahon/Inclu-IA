@@ -73,20 +73,17 @@ PASOS:
 ```markdown
 ## Instalación
 
-1. **Actualizar Raspbian**  
-   ```bash
+1. **Actualizar Raspbian** 
    sudo apt update && sudo apt upgrade -y
    sudo reboot
    ```  
    Instala herramientas básicas:  
-   ```bash
    sudo apt install -y git build-essential python3-pip \
      hostapd dnsmasq avahi-daemon
    ```
 
 2. **Configurar punto de acceso Wi-Fi**  
    - Editar `/etc/hostapd/hostapd.conf`:  
-     ```ini
      interface=wlan0
      ssid=Subtitulos_AP
      hw_mode=g
@@ -99,22 +96,18 @@ PASOS:
      rsn_pairwise=CCMP
      ```
    - Apuntar al archivo en `/etc/default/hostapd`:  
-     ```bash
      DAEMON_CONF="/etc/hostapd/hostapd.conf"
      ```
    - Configurar DHCP en `/etc/dnsmasq.conf`:  
-     ```ini
      interface=wlan0
      dhcp-range=192.168.4.2,192.168.4.20,255.255.255.0,24h
      ```
    - Asignar IP estática en `/etc/dhcpcd.conf`:  
-     ```ini
      interface wlan0
        static ip_address=192.168.4.1/24
        nohook wpa_supplicant
      ```
    - Habilitar y arrancar:  
-     ```bash
      sudo systemctl enable hostapd dnsmasq
      sudo systemctl start hostapd dnsmasq
      ```
@@ -124,12 +117,10 @@ PASOS:
    sudo apt install -y pulseaudio pulseaudio-module-bluetooth bluez-tools python3-pyaudio
    ```  
    Editar `/etc/pulse/system.pa` y añadir:  
-   ```ini
    load-module module-bluetooth-policy
    load-module module-bluetooth-discover
    ```  
    Luego:  
-   ```bash
    bluetoothctl
    # dentro de bluetoothctl:
    scan on
@@ -139,22 +130,18 @@ PASOS:
    exit
    ```  
    Verifica el dispositivo:  
-   ```bash
    pactl list sources short
    ```
 
 4. **Instalar fast-whisper.cpp**  
-   ```bash
    git clone https://github.com/ggerganov/whisper.cpp
    cd whisper.cpp
    make
    ```  
    Descarga un modelo (por ejemplo, “tiny”):  
-   ```bash
    ./models/download-ggml-model.sh tiny.en
    ```  
    Prueba con un archivo de audio:  
-   ```bash
    arecord -f S16_LE -r 16000 -d 5 test.wav
    ./main -m models/ggml-tiny.en.bin -f test.wav
    ```
@@ -162,12 +149,10 @@ PASOS:
 ## Uso
 
 ### A. Iniciar servicios de red
-```bash
 sudo systemctl start hostapd dnsmasq
 ```
 
 ### B. Ejecutar el servidor de transcripción
-```bash
 cd software
 pip3 install -r requirements.txt
 python3 server.py
