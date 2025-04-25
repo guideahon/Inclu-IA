@@ -78,12 +78,14 @@ PASOS:
    sudo reboot
    ```  
    Instala herramientas básicas:  
+   ```
    sudo apt install -y git build-essential python3-pip \
      hostapd dnsmasq avahi-daemon
    ```
 
 2. **Configurar punto de acceso Wi-Fi**  
-   - Editar `/etc/hostapd/hostapd.conf`:  
+   - Editar `/etc/hostapd/hostapd.conf`:
+   - ``` 
      interface=wlan0
      ssid=Subtitulos_AP
      hw_mode=g
@@ -95,32 +97,38 @@ PASOS:
      wpa_pairwise=TKIP
      rsn_pairwise=CCMP
      ```
-   - Apuntar al archivo en `/etc/default/hostapd`:  
+   - Apuntar al archivo en `/etc/default/hostapd`:
+   - ```
      DAEMON_CONF="/etc/hostapd/hostapd.conf"
      ```
-   - Configurar DHCP en `/etc/dnsmasq.conf`:  
+   - Configurar DHCP en `/etc/dnsmasq.conf`:
+   - ```
      interface=wlan0
      dhcp-range=192.168.4.2,192.168.4.20,255.255.255.0,24h
      ```
-   - Asignar IP estática en `/etc/dhcpcd.conf`:  
+   - Asignar IP estática en `/etc/dhcpcd.conf`:
+   - ```
      interface wlan0
        static ip_address=192.168.4.1/24
        nohook wpa_supplicant
      ```
-   - Habilitar y arrancar:  
+   - Habilitar y arrancar:
+   - ```
      sudo systemctl enable hostapd dnsmasq
      sudo systemctl start hostapd dnsmasq
      ```
 
 3. **Emparejar micrófono Bluetooth**  
-   ```bash
+   ```
    sudo apt install -y pulseaudio pulseaudio-module-bluetooth bluez-tools python3-pyaudio
    ```  
-   Editar `/etc/pulse/system.pa` y añadir:  
+   Editar `/etc/pulse/system.pa` y añadir:
+   ```
    load-module module-bluetooth-policy
    load-module module-bluetooth-discover
    ```  
-   Luego:  
+   Luego:
+   ```
    bluetoothctl
    # dentro de bluetoothctl:
    scan on
@@ -129,19 +137,23 @@ PASOS:
    connect XX:XX:XX:XX:XX:XX
    exit
    ```  
-   Verifica el dispositivo:  
+   Verifica el dispositivo:
+   ```
    pactl list sources short
    ```
 
-4. **Instalar fast-whisper.cpp**  
+5. **Instalar fast-whisper.cpp**
+   ```
    git clone https://github.com/ggerganov/whisper.cpp
    cd whisper.cpp
    make
    ```  
-   Descarga un modelo (por ejemplo, “tiny”):  
+   Descarga un modelo (por ejemplo, “tiny”):
+   ```
    ./models/download-ggml-model.sh tiny.en
    ```  
-   Prueba con un archivo de audio:  
+   Prueba con un archivo de audio:
+   ```
    arecord -f S16_LE -r 16000 -d 5 test.wav
    ./main -m models/ggml-tiny.en.bin -f test.wav
    ```
@@ -149,10 +161,12 @@ PASOS:
 ## Uso
 
 ### A. Iniciar servicios de red
+```
 sudo systemctl start hostapd dnsmasq
 ```
 
 ### B. Ejecutar el servidor de transcripción
+```
 cd software
 pip3 install -r requirements.txt
 python3 server.py
